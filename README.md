@@ -32,3 +32,5 @@ Start time: 4
 Finish time: still not done
 
 Actual time needed to complete: tbd
+
+![web request response cycle](webrequestresponsecycle.jpg)
