@@ -14,19 +14,22 @@ const PORT = process.env.PORT;
 app.get('/weather', handleGetWeather)
 
 function handleGetWeather(request, response) {
-  const lat = request.query.lat
-  const lon = request.query.lon
-  const city_name = request.query.city_name
+  // const lat = request.query.lat
+  // const lon = request.query.lon
+  // const city_name = request.query.city_name
+  console.log('REQUEST.QUERY',request.query);
+  const requestURL = `https://api.weatherbit.io/v2.0/current?lat=${request.query.lat}&lon=${request.query.lon}&key=${process.env.WEATHER_API_KEY}&units=I`
+  axios.get(requestURL).then(responseObject => console.log(responseObject)).catch(error => console.error(error));
 
-  let cityMatch = weatherData.find(cityObject => cityObject.city_name.toLowerCase() === city_name.toLowerCase());
-  if(cityMatch) {
-    let weatherDescriptions = cityMatch.data.map(cityBlob => new Forecast(cityBlob));
+  // let cityMatch = weatherData.find(cityObject => cityObject.city_name.toLowerCase() === city_name.toLowerCase());
+  // if(cityMatch) {
+  //   let weatherDescriptions = cityMatch.data.map(cityBlob => new Forecast(cityBlob));
     // let locations = weatherData.map(cityObject => new Location(cityObject)); 
-    response.status(200).send(weatherDescriptions);
+    // response.status(200).send(weatherDescriptions);
     // response.status(200).send(locations);
-  } else {
-    response.status(400).send('Sorry, no data on that city')
-  }
+//   } else {
+//     response.status(400).send('Sorry, no data on that city')
+//   }
 }
 
 class Forecast {
