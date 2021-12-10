@@ -1,50 +1,42 @@
 'use strict';
-const weatherData = require('./data/weather.json');
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 
 const app = express();
-
 app.use(cors());
+app.get('/weather', handleGetWeather)
+app.get('/*', ((req, res) => res.status(404).send('route not found')));
 
 const PORT = process.env.PORT;
 
-app.get('/weather', handleGetWeather)
-
 function handleGetWeather(request, response) {
-  // const lat = request.query.lat
-  // const lon = request.query.lon
-  // const city_name = request.query.city_name
-  console.log('REQUEST.QUERY',request.query);
-  const requestURL = `https://api.weatherbit.io/v2.0/current?lat=${request.query.lat}&lon=${request.query.lon}&key=${process.env.WEATHER_API_KEY}&units=I`
-  axios.get(requestURL).then(responseObject => console.log(responseObject)).catch(error => console.error(error));
-
-  // let cityMatch = weatherData.find(cityObject => cityObject.city_name.toLowerCase() === city_name.toLowerCase());
-  // if(cityMatch) {
-  //   let weatherDescriptions = cityMatch.data.map(cityBlob => new Forecast(cityBlob));
-    // let locations = weatherData.map(cityObject => new Location(cityObject)); 
-    // response.status(200).send(weatherDescriptions);
-    // response.status(200).send(locations);
-//   } else {
-//     response.status(400).send('Sorry, no data on that city')
-//   }
+  // const currentWeatherURL = `https://api.weatherbit.io/v2.0/current?lat=${request.query.lat}&lon=${request.query.lon}&key=${process.env.WEATHER_API_KEY}&units=I`
+  const dailyWeatherURL = `http://api.weatherbit.io/v2.0/forecast/daily?lat=${request.query.lat}&lon=${request.query.lon}&key=${process.env.WEATHER_API_KEY}&units=I`
+  axios.get(dailyWeatherURL)
+    .then(responseObject => {
+      // any response object that comes back from an Axios request will have a "data" property
+      // the shape of responseObject.data is then dictated by the API
+      // Weatherbit API sends back a blob with a "data" property on it as well, which is why we have to access the stuff we care about at responseObject.data.data
+      let weatherDescription = responseObject.data.data.map(dataBlob => new Forecast(dataBlob));
+      response.status(200).send(weatherDescription);
+    })
+    .catch(error => {
+      console.error(error.message);
+      response.status(500).send('Sorry, something went wrong! (Status code: 500)');
+    });
 }
 
 class Forecast {
   constructor(obj) {
     this.date = obj.datetime;
-    this.description = `A high of ${obj.max_temp}, a low of ${obj.low_temp}, with ${obj.weather.description}`
+    // description that works with currentWeatherURL
+    // this.description = `A temp of ${obj.temp} and ${obj.weather.description.toLowerCase()}.`
+    // description that works with dailyWeatherURL
+    this.description = `A high of ${obj.max_temp}, a low of ${obj.low_temp}, and ${obj.weather.description.toLowerCase()}.`
   }
 }
-
-// class Location {
-//   constructor(obj) {
-//     this.lat = obj.lat;
-//     this.lon = obj.lon;
-//     this.locationString = `The latitude of ${obj.city_name} is ${obj.lat}, and the longitude is ${obj.lon}.`;
-//   }
-// }
 
 app.listen(PORT, () => console.log('server is listening on port ', PORT));
