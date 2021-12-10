@@ -8,12 +8,12 @@ const axios = require('axios');
 const app = express();
 app.use(cors());
 app.get('/weather', handleGetWeather)
+app.get('/movies', handleGetMovies)
 app.get('/*', ((req, res) => res.status(404).send('route not found')));
 
 const PORT = process.env.PORT;
 
 function handleGetWeather(request, response) {
-  // const currentWeatherURL = `https://api.weatherbit.io/v2.0/current?lat=${request.query.lat}&lon=${request.query.lon}&key=${process.env.WEATHER_API_KEY}&units=I`
   const dailyWeatherURL = `http://api.weatherbit.io/v2.0/forecast/daily?lat=${request.query.lat}&lon=${request.query.lon}&key=${process.env.WEATHER_API_KEY}&units=I`
   axios.get(dailyWeatherURL)
     .then(responseObject => {
@@ -29,13 +29,34 @@ function handleGetWeather(request, response) {
     });
 }
 
+async function handleGetMovies(req, res) {
+  const { city_name } = req.query;
+  try {
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&language=en-US&query=${city_name}&page=1&include_adult=false`;
+    const movieResponse = await axios.get(url);
+    const cleanedMovies = movieResponse.data.results.map(movie => new Movie(movie));
+    res.send(cleanedMovies);
+  } catch (e) {
+    res.status(500).send('server error')
+  }
+}
+
 class Forecast {
   constructor(obj) {
     this.date = obj.datetime;
-    // description that works with currentWeatherURL
-    // this.description = `A temp of ${obj.temp} and ${obj.weather.description.toLowerCase()}.`
-    // description that works with dailyWeatherURL
     this.description = `A high of ${obj.max_temp}, a low of ${obj.low_temp}, and ${obj.weather.description.toLowerCase()}.`
+  }
+}
+
+class Movie {
+  constructor(obj) {
+    this.title = obj.title;
+    this.overview = obj.overview;
+    this.avg_votes = obj.vote_average;
+    this.total_votes = obj.vote_count;
+    this.image_url = obj.poster_path ? `https://.imagetmdb.org/t/p/w500${obj.poster_path}` : `https://www.reelviews.net/resources/img/default_poster.jpg`;
+    this.popularity = obj.popularity;
+    this.released_on = obj.release_date;
   }
 }
 
