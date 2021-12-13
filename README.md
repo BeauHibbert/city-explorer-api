@@ -34,3 +34,4 @@ Finish time: still not done
 Actual time needed to complete: tbd
 
 ![web request response cycle](webrequestresponsecycle.jpg)
+![web req response cycle fri lab](web-req-res-cycle.jpg)
