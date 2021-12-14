@@ -1,24 +1,31 @@
-# Project Name
+# City Explorer API
 
-**Author**: Your Name Goes Here
-**Version**: 1.0.0 (increment the patch/fix version number if you make more commits past your first submission)
+**Author**: Beau Hibbert
+**Version**: 1.5.0 (increment the patch/fix version number if you make more commits past your first submission)
 
 ## Overview
-<!-- Provide a high level overview of what this application is and why you are building it, beyond the fact that it's an assignment for this class. (i.e. What's your problem domain?) -->
+
+This is a front end application that allows users to search for a city and get back related weather and movie data in order to find out more about the city.
 
 ## Getting Started
-<!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
+
+A user would have to start by cloning a repository down from Github. They would then need to run ```npm i``` to install all necessary npm packages. Next, they would need to obtain a weatherbit api key and add it to their .env file. Lastly they would need to run ```npm start``` in order to run their server.
 
 ## Architecture
-<!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
+
+The project is built using React/Javascript for its frontend, and node/express for its backend. The application is styled using scss. The client makes requests to custom routes on the backend's server which makes requests to weatherbit and locationIQ APIs.
 
 ## Change Log
-<!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an example:
 
-01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource. -->
+12/7/21 - Scaffolding
+12/8/21 - /weather endpoint now making successful API requests to locationIQ and weatherbit
+12/9/21 - Add /movie route and query movieDB API
+12/12/21 - Added caching functionality for movie and weather data to make for a faster user experience.
 
 ## Credit and Collaborations
-<!-- Give credit (and a link) to other people or resources that helped you build this application. -->
+https://locationiq.com/
+https://www.weatherbit.io/
+https://www.themoviedb.org/?language=en-US
 
 
 
